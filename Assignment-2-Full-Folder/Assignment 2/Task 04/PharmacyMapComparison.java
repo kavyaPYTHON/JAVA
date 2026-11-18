@@ -1,0 +1,7 @@
+import java.util.*;
+
+public class PharmacyMapComparison {
+    static Map<String,Integer> create(String type,int n){Map<String,Integer> m= type.equals("TreeMap")?new TreeMap<>():type.equals("LinkedHashMap")?new LinkedHashMap<>():new HashMap<>();for(int i=0;i<n;i++)m.put(String.format("MED%06d",(n-i)%n),100+i);return m;}
+    static long lookup(Map<String,Integer> m,int n){long s=System.nanoTime();long total=0;for(int i=0;i<100000;i++)total+=m.getOrDefault(String.format("MED%06d",i%n),0);long elapsed=System.nanoTime()-s;if(total==Long.MIN_VALUE)System.out.println(total);return elapsed;}
+    public static void main(String[] args){for(int n:new int[]{1000,10000,50000}){System.out.println("\nMedicines: "+n);for(String type:new String[]{"HashMap","TreeMap","LinkedHashMap"}){Map<String,Integer> m=create(type,n);long get=lookup(m,n);long start=System.nanoTime();String first="";for(String k:m.keySet())first=k;long iter=System.nanoTime()-start;System.out.printf("%-13s 100k lookups=%.3f ms, iteration=%.3f ms, last key=%s%n",type,get/1e6,iter/1e6,first);}Map<String,Integer> sorted=create("TreeMap",n);Map<String,Integer> insertion=create("LinkedHashMap",n);System.out.println("TreeMap code-order first key: "+sorted.keySet().iterator().next());System.out.println("LinkedHashMap insertion-order first key: "+insertion.keySet().iterator().next());}}
+}
